@@ -11,8 +11,8 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@TestPropertySource("classpath:yanny.properties")
-@ActiveProfiles("externalized")
+@TestPropertySource("classpath:laurel.properties")
+@ActiveProfiles("laurel-properties")
 @SpringJUnitConfig(classes = {PropertiesTest.TestConfig.class})
 public class PropertiesTest {
 
@@ -30,7 +30,7 @@ public class PropertiesTest {
 
         String word = hearingInterpreter.whatIheard();
 
-        assertEquals("YaNnY", word);
+        assertEquals("LauReL", word);
     }
 
 }
