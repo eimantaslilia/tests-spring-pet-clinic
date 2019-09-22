@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -58,10 +59,41 @@ class OwnerControllerTest {
         mockMvc.perform(post("/owners/new")
             .param("firstName", "Jimmy")
             .param("lastName", "Buffalo")
-            .param("Address", "145 Hell St")
-            .param("City", "Lincolnshire")
-            .param("Telephone", "12544565"))
+            .param("address", "145 Hell St")
+            .param("city", "Lincolnshire")
+            .param("telephone", "12544565"))
                 .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    void newOwnerPostNotValid() throws Exception{
+        mockMvc.perform(post("/owners/new")
+                .param("firstName", "Jimmy")
+                .param("lastName", "Buffalo")
+                .param("City", "Lincolnshire"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeHasFieldErrors("owner", "address"))
+                .andExpect(model().attributeHasFieldErrors("owner", "telephone"))
+                .andExpect(view().name("owners/createOrUpdateOwnerForm"));
+    }
+
+    @Test
+    void testProcessUpdateOwnerFormSuccess() throws Exception{
+        mockMvc.perform(post("/owners/{ownerId}/edit", 6)
+                .param("firstName", "Billy")
+                .param("lastName", "Post")
+                .param("address", "12 Lincoln St")
+                .param("city", "Birmingham")
+                .param("telephone", "99987458"))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(view().name("redirect:/owners/{ownerId}"));
+    }
+
+    @Test
+    void testProcessUpdateOwnerFormFailure() throws Exception{
+        mockMvc.perform(post("/owners/6/edit"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("owners/createOrUpdateOwnerForm"));
     }
 
     @Test
